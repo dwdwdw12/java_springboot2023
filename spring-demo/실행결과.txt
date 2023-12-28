@@ -1,0 +1,14 @@
+http://127.0.0.1/string -> Welcome
+http://127.0.0.1/member 
+ -> {"memId":"userone","password":"onepass","email":"user@one.com"} 
+	->하나의 json 형태의 자료를 반환
+http://127.0.0.1/list
+ ->[
+    {"memId":"usertwo","password":"twopass","email":"user@two.com"},
+    {"memId":"userthree","password":"threepass","email":"user@three.com"},
+    {"memId":"userfour","password":"fourpass","email":"user@four.com"}
+    ]
+	
+	-> json 형태의 자료들을 배열로 묶어서 반환
+
+@RestController는 요청에 대한 응답으로 자료를 반환한다. 객체 자료의 경우는 json의 형태로 반환.

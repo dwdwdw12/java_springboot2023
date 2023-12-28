@@ -2,13 +2,16 @@ package org.zerock.b01.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.zerock.b01.dto.MemberJoinDTO;
+import org.zerock.b01.repository.MemberRepository;
 import org.zerock.b01.service.MemberService;
 
 @Controller
@@ -18,6 +21,8 @@ import org.zerock.b01.service.MemberService;
 public class MemberController {
 
     private final MemberService memberService;
+    private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @GetMapping("/login")
     public void loginGET(@RequestParam(value = "error", required = false) String error,
@@ -53,5 +58,29 @@ public class MemberController {
         return "redirect:/member/login";    //회원 가입 후 로그인
     }
 
+    @GetMapping("/modify")
+    public void modifyGET(Model model){
+        log.info("modify get...");
+
+        //model.addAttribute(m)
+    }
+
+    @PostMapping("/modify")
+    public String modifyPOST(MemberJoinDTO memberJoinDTO, RedirectAttributes redirectAttributes){
+        log.info("modify post...");
+        log.info(memberJoinDTO);
+
+        try {
+            memberRepository.updatePassword(passwordEncoder.encode(memberJoinDTO.getMpw()), memberJoinDTO.getMid());
+        } catch (Exception e){
+            //redirectAttributes.addFlashAttribute("error", "mid");
+            return "redirect:/member/modify";
+        }
+
+        redirectAttributes.addFlashAttribute("result", "success");
+
+        //return "redirect:/board/list";
+        return "redirect:/member/login";    //회원정보 수정 후 로그인
+    }
 
 }

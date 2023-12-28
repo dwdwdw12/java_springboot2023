@@ -12,10 +12,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.zerock.b01.security.CustomUserDetailService;
 import org.zerock.b01.security.handler.Custom403Handler;
+import org.zerock.b01.security.handler.CustomSocialLoginSuccessHandler;
 
 import javax.sql.DataSource;
 
@@ -57,6 +59,11 @@ public class CustomSecurtyConfig {
             config.accessDeniedHandler(accessDeniedHandler());  //403
         });
 
+        http.oauth2Login(config->{
+            config.loginPage("/member/login")
+                    .successHandler(authenticationSuccessHandler());
+        });
+
         return http.build();    //SecurityFilterChain 객체 반환. 로그인 없이 모든 사용자가 list에 접근 가능.
     }
 
@@ -77,6 +84,11 @@ public class CustomSecurtyConfig {
     @Bean
     public AccessDeniedHandler accessDeniedHandler(){
         return new Custom403Handler();
+    }
+
+    @Bean
+    public AuthenticationSuccessHandler authenticationSuccessHandler(){
+        return new CustomSocialLoginSuccessHandler(passwordEncoder());
     }
 
 }
